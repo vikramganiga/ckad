@@ -1,0 +1,26 @@
+Questions: On the node, the directory /root/app-source contains a valid Dockerfile.
+1. Build a container image using Podman with name my-app:1.0 using /root/app-source as build context
+2. Save the image as a tarball to /root/my-app.tar
+
+# The following exercise creates an image (based on ngixin ) to understand build and save command
+mkdir ckad-nginx
+echo "<h1>Hello from my custom Podman Image!</h1>" > index.html
+
+vi Containerfile
+# Use the official production-ready Nginx base image
+FROM docker.io/library/nginx:alpin
+
+# Copy your custom webpage into the server's default public directory
+COPY index.html /var/www/html/index.html
+
+# Expose port 80 to allow incoming network traffic
+EXPOSE 80
+
+## Build the image - CRITICAL commands
+podman build -t ckadnginx:v1 .
+podman images
+podman save -o ckadnginx.tar ckadnginx
+
+kubectl run ckadnginx --image=ckadnginx --port:80 -n ckad
+kubectl run busybox --image=busybox -n ckad -- curl http://<podip>:80
+
