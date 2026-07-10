@@ -1,0 +1,13 @@
+#Create Canary Deployment with Manual Traffic Split
+
+#deployment
+kubectl create deployment web-app --image=nginx --port=80 -n ckad --labels=app=webapp,version=v1 --dry-run=client -o yaml
+
+#service 
+kubectl create service web-service --selector=app=webapp
+
+//scale up
+kubectl scale deployment web-app --replicas=8
+
+  
+
