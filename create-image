@@ -8,10 +8,10 @@ echo "<h1>Hello from my custom Podman Image!</h1>" > index.html
 
 vi Containerfile
 # Use the official production-ready Nginx base image
-FROM docker.io/library/nginx:alpin
+FROM docker.io/library/nginx:alpine
 
 # Copy your custom webpage into the server's default public directory
-COPY index.html /var/www/html/index.html
+COPY index.html /usr/share/nginx/html/index.html
 
 # Expose port 80 to allow incoming network traffic
 EXPOSE 80
@@ -19,8 +19,25 @@ EXPOSE 80
 ## Build the image - CRITICAL commands
 podman build -t ckadnginx:v1 .
 podman images
-podman save -o ckadnginx.tar ckadnginx
 
-kubectl run ckadnginx --image=ckadnginx --port:80 -n ckad
-kubectl run busybox --image=busybox -n ckad -- curl http://<podip>:80
+#result
+
+$ podman images
+REPOSITORY               TAG         IMAGE ID      CREATED         SIZE
+localhost/ckadnginx      v1          8702d38ecf47  48 seconds ago  63.6 MB
+docker.io/library/nginx  alpine      ea51152ef8c4  2 weeks ago     63.6 MB
+
+podman save -o ckadnginx.tar localhost/ckadnginx:v1
+
+#load image to minikube
+
+minikube image load ckadnginx.tar
+minikube image ls
+
+kubectl run ckadnginx --image=localhost/ckadnginx:v1 --port=80
+
+kubectl exec -it ckadnginx -- sh
+/ # curl http://localhost:80
+<h1> hello from ckad </h1>
+/ #
 
