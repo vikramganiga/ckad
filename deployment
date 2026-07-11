@@ -1,13 +1,85 @@
 #Create Canary Deployment with Manual Traffic Split
 
-#deployment
-kubectl create deployment web-app --image=nginx --port=80 -n ckad --labels=app=webapp,version=v1 --dry-run=client -o yaml
+#deployment 
+#create deployment does not support lables
+kubectl create deployment web-app -n ckad --image=nginx --port=80 --dry-run=client -o yaml > web-app.yaml
 
-#service 
-kubectl create service web-service --selector=app=webapp
+#edit deployment yaml to add lables 
+# error correction while defining labels : not =  sign to be used
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: webapp
+    version: v2
+  name: web-app
+  namespace: ckad
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: webapp
+      version: v2
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: webapp
+        version: v2
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        ports:
+        - containerPort: 80
+        resources: {}
+status: {}
+
+#service -
+kubectl create service clusterip web-service -n ckad --tcp=80:80 --dry-run=client -o yaml > webserive.yaml
+
+#edit add labels
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: web-service
+  name: web-service
+  namespace: ckad
+spec:
+  ports:
+  - name: deploymentport
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: webapp
+  type: ClusterIP
+status:
+  loadBalancer: {}
+
+#service
+$ kubectl get service --show-labels -n ckad
+NAME          TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE   LABELS
+web-service   ClusterIP   10.106.211.43   <none>        80/TCP    78s   app=web-service
+$
 
 //scale up
 kubectl scale deployment web-app --replicas=8
+
+//deployment and add one more deployment change name.labels
+
+//show deployment
+kubectl get deployments -n ckad --show-labels
+NAME             READY   UP-TO-DATE   AVAILABLE   AGE     LABELS
+web-app          3/3     3            3           4m16s   app=webapp,version=v2
+web-app-canary   1/1     1            1           18s     app=web-app-canary,version=v1
+
+//verify
+localhost/ckadnginx:v1
+
 
   
 
