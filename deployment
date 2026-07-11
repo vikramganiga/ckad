@@ -69,7 +69,8 @@ $
 //scale up
 kubectl scale deployment web-app --replicas=8
 
-//deployment and add one more deployment change name.labels
+//add one more deployment using the above YAML file, and add with name and respective labels (only version change like version=v2)
+//if minikube is using, then a second deployment should be a local build image (customize nginx image),   policy should be imagePullPolicy: Never
 
 //show deployment
 kubectl get deployments -n ckad --show-labels
@@ -78,8 +79,14 @@ web-app          3/3     3            3           4m16s   app=webapp,version=v2
 web-app-canary   1/1     1            1           18s     app=web-app-canary,version=v1
 
 //verify
-localhost/ckadnginx:v1
+kubectl run tester --rm -it --image=busybox:1.36 -n ckad -- sh
 
+for i in $(seq 1 20); do
+    wget -qO- http://web-service
+    echo
+done
+
+//it should show a different index.html file result
 
   
 
