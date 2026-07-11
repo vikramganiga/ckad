@@ -4,6 +4,7 @@ Questions: On the node, the directory /root/app-source contains a valid Dockerfi
 
 # The following exercise creates an image (based on ngixin ) to understand build and save command
 mkdir ckad-nginx
+cd ckad-nginx
 echo "<h1>Hello from my custom Podman Image!</h1>" > index.html
 
 vi Containerfile
