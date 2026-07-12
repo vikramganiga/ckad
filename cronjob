@@ -1,0 +1,51 @@
+#Create CronJob with Schedule and History Limits
+kubectl create cronjob crontest --schedule="*/30 * * * *" --image=busybox:latest -n ckad --dry-run=client -o yaml  -- sh "echo Backup completed" > cronjobtest.yaml
+
+#edit cronjob will provide most of parameters 
+#edit successfulJobsHistoryLimit: 3, failedJobsHistoryLimit: 2, activeDeadlineSeconds: 300, restartPolicy: Never
+
+kubectl get cronjob -n ckad -o yaml
+apiVersion: v1
+items:
+- apiVersion: batch/v1
+  kind: CronJob
+  metadata:
+    creationTimestamp: "2026-07-12T06:07:24Z"
+    generation: 2
+    name: crontest
+    namespace: ckad
+    resourceVersion: "571658"
+    uid: b33a2158-6dbb-4cd4-b29a-a43b3dee75f3
+  spec:
+    concurrencyPolicy: Allow
+    failedJobsHistoryLimit: 2
+    jobTemplate:
+      metadata:
+        name: crontest
+      spec:
+        activeDeadlineSeconds: 100
+        template:
+          metadata: {}
+          spec:
+            containers:
+            - command:
+              - sh
+              - echo "Backup completed"
+              image: busybox:latest
+              imagePullPolicy: Always
+              name: crontest
+              resources: {}
+              terminationMessagePath: /dev/termination-log
+              terminationMessagePolicy: File
+            dnsPolicy: ClusterFirst
+            restartPolicy: Never
+            schedulerName: default-scheduler
+            securityContext: {}
+            terminationGracePeriodSeconds: 30
+    schedule: '*/30 * * * *'
+    successfulJobsHistoryLimit: 3
+    suspend: false
+  status: {}
+kind: List
+metadata:
+  resourceVersion: ""
