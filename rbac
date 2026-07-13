@@ -1,0 +1,16 @@
+#Create a ServiceAccount named log-sa in namespace audit
+kubectl create serviceaccount log-sa -n ckad 
+
+#Create a Role log-role that grants get, list, and watch on resource pods
+kubectl create role log-role verb=get,list --resource=pods -n ckad
+
+#Create a RoleBinding log-rb binding log-role to log-sa
+kubectl create rolebinding log-rb --role=log-role --serviceaccount=ckad/log-sa
+
+#create pod
+kubectl run nginx --image=nginx --port=80
+
+#Update Pod log-collector to use ServiceAccount log-sa
+kubectl edit nginx
+
+
