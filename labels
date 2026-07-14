@@ -1,0 +1,29 @@
+#add labels to pod
+kubectl run nginx --image=nginx --port=80 --lables=env=prod,app=nm 
+
+#show labels of pods
+kubectl get pods --shows-lables
+
+#edit labels
+kubectl edit nginx 
+
+#using label command
+kubectl get pods -l env=prod
+
+#add label
+kubectl label pods ngxin env=test
+
+#remove 
+kubectl label pods ngnix env-
+
+#add label to deployment vs pod
+kubectl create deployment youapp --image=nginx --port=80
+kubectl label deployment youapp env=prod
+
+kubectl get deployment -show-lables
+kubectl get deployment -l env=prod
+
+kubectl get pods --show-labels
+
+
+
