@@ -25,5 +25,7 @@ kubectl get deployment -l env=prod
 
 kubectl get pods --show-labels
 
+#edit deployment to add label to pod spec in deployment and deployment 
+
 
 
