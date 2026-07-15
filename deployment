@@ -88,5 +88,44 @@ done
 
 //it should show a different index.html file result
 
-  
+//Deployment - issue broken-app.yaml
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: broken-app
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+        - name: web
+          image: nginx
+
+//corrected - broken-app.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: broken-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+        - name: web
+          image: nginx
+
+#test scenario
+
+kubectl create -f broken-app.yaml (wrong)
+kubectl apply -f broken-app.yaml (corrected)
+kubectl rollout status deployment broken-app
 
