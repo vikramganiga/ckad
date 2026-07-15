@@ -128,4 +128,5 @@ spec:
 kubectl create -f broken-app.yaml (wrong)
 kubectl apply -f broken-app.yaml (corrected)
 kubectl rollout status deployment broken-app
+kubectl get pods -n broken-app
 
