@@ -130,3 +130,12 @@ kubectl apply -f broken-app.yaml (corrected)
 kubectl rollout status deployment broken-app
 kubectl get pods -n broken-app
 
+#Edit image 
+kubectl create deployment app --image=nginx --port=80
+kubectl set image deployment app nginx=nginx:1.25
+kubectl rollout status deployment app
+kubectl rollout history deployment app
+kubectl rollout undo deployment app --to-revision=1
+
+# What is the difference between history and status 
+
