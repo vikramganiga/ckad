@@ -139,8 +139,9 @@ kubectl rollout undo deployment app --to-revision=1
 
 #Deployment with readiness
 kubectl create deployment app --image=nginx --port=80 -n ckad --dry-run=client -o yaml > deployment-app.yaml
-vi deployment-app.yaml
-update (example
+# update deployment-app.yaml
+# (example)
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -170,7 +171,36 @@ kubectl rollout status deployment app
 
 #describe pod and check readiness probe
 
-
-
 # What is the difference between history and status 
+
+#security 
+kubectl create deployment app-secure --namespace=ckad --image=nginx --port=80 --dry-run=client -o yaml > app-secure.yaml
+
+# update app-secure.yaml
+# (example)
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: broken-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      securityContext:
+        runAsUser: 1000
+      containers:
+        - name: web
+          image: nginx
+          securityContext: 
+           capabilities:
+            add: ["NET_ADMIN"]
+
+
 
