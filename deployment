@@ -165,6 +165,12 @@ spec:
           initialDelaySeconds: 5
           periodSeconds: 10
 
+kubectl create -f deployment-app.yaml
+kubectl rollout status deployment app
+
+#describe pod and check readiness probe
+
+
 
 # What is the difference between history and status 
 
