@@ -1,0 +1,16 @@
+#deployment
+kubectl create deployment appde --image=nginx --port=80 --dry-run=client -n ckad -o yaml > appde.yaml
+
+#edit yaml with two pods with two labels and then deploy
+
+#service
+kubectl create service app-sa 
+
+#edit service to add lable
+
+#shows label
+kubectl get deployment --show-labels
+
+kubectl get pod --show-labels
+
+
