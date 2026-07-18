@@ -1,31 +1,72 @@
 #Create Canary Deployment with Manual Traffic Split
 
 #deployment 
-#create deployment does not support lables
 kubectl create deployment web-app -n ckad --image=nginx --port=80 --dry-run=client -o yaml > web-app.yaml
 
-#edit deployment yaml to add lables 
-# error correction while defining labels : not =  sign to be used
+# NOTE
+# create deployment does not support labels
+# error correction while defining the label used equal(=) sign
+# in service - selector matters, should not get confused with --show-labels command, edit service can be used to correct it
+# Scaling a Deployment does not create a new Deployment revision
+
+kubectl run busybox --image=busybox --rm -it -- wget http://webapp pod "busybox" 
+deleted from default namespace error: timed out waiting for the condition
+# above error the timeout indicates the BusyBox pod could not successfully fetch the page before it was deleted
+
+kubectl run busybox --image=busybox:1.36 --rm -it -- sh
+# inside shell test wget command 
+
+#if using image Traefik (reverse prox) instead of nginx the response is wget: server returned error: HTTP/1.1 404 Not Found
+
+#sample deployments v1
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: web-app
+    version: v1
+  name: web-appv1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-app
+      version: v1
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: web-app
+        version: v1
+    spec:
+      containers:
+      - image: traefik
+        name: traefik
+        ports:
+        - containerPort: 80
+        resources: {}
+status: {}
+
+#deployment v2
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: webapp
+    app: web-app
     version: v2
   name: web-app
-  namespace: ckad
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: webapp
+      app: web-app
       version: v2
   strategy: {}
   template:
     metadata:
       labels:
-        app: webapp
+        app: web-app
         version: v2
     spec:
       containers:
@@ -36,38 +77,28 @@ spec:
         resources: {}
 status: {}
 
-#service -
-kubectl create service clusterip web-service -n ckad --tcp=80:80 --dry-run=client -o yaml > webserive.yaml
-
-#edit add labels
-
+#service 
 apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: web-service
-  name: web-service
-  namespace: ckad
+    app: web-app
+  name: webapp
 spec:
   ports:
-  - name: deploymentport
+  - name: 80-80
     port: 80
     protocol: TCP
     targetPort: 80
   selector:
-    app: webapp
+    app: web-app
   type: ClusterIP
 status:
   loadBalancer: {}
 
-#service
-$ kubectl get service --show-labels -n ckad
-NAME          TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE   LABELS
-web-service   ClusterIP   10.106.211.43   <none>        80/TCP    78s   app=web-service
-$
 
 //scale up
-kubectl scale deployment web-app --replicas=8
+kubectl scale deployment web-app --replicas=3
 
 //add one more deployment using the above YAML file, and add with name and respective labels (only version change like version=v2)
 //if minikube is using, then a second deployment should be a local build image (customize nginx image),   policy should be imagePullPolicy: Never
@@ -82,7 +113,7 @@ web-app-canary   1/1     1            1           18s     app=web-app-canary,ver
 kubectl run tester --rm -it --image=busybox:1.36 -n ckad -- sh
 
 for i in $(seq 1 20); do
-    wget -qO- http://web-service
+    wget -qO- http://<servicename>
     echo
 done
 
