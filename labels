@@ -2,7 +2,7 @@
 kubectl run nginx --image=nginx --port=80 --lables=env=prod,app=nm 
 
 #show labels of pods
-kubectl get pods --shows-lables
+kubectl get pod --show-labels
 
 #edit labels
 kubectl edit nginx 
