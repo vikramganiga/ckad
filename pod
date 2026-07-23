@@ -1,0 +1,15 @@
+#create pod with image httpd:2.4.41-alpine , pod name pod1 , container name pod1-container1
+#write script get pod status
+
+kubectl run pod1 --image=httpd:2.4.41-alpine --dry-run=client -o yaml > pod1.yaml
+
+#edit yaml with container name
+
+kubectl create -f  pod1.yaml
+
+#script check status
+#!/bin/bash
+kubectl get pod pod1
+
+$chmod +x checkpodstatus.sh
+./checkpodstatus.sh
