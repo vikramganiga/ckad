@@ -1,0 +1,35 @@
+#create job with image busybox:1.31.0 and execute sleep 2 && echo done , total run 3 times and 2 execute in parallel
+# Check history,container name , lable 
+
+ kubectl create job awesomejob --image=busybox:1.31.0 --dry-run=client  -o yaml -- 'sleep 2 & echo done' > awesomejob.yaml
+
+ #edit for above values
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: awesomejob
+spec:
+  completions: 3
+  parallelism: 1
+  template:
+    metadata:
+     labels:
+       name: pi
+    spec:
+      containers:
+      - command:
+        - sh
+        - -c
+        - sleep 2 && echo done
+        image: busybox:1.31.0
+        name: awesomejobcon
+        resources: {}
+      restartPolicy: Never
+status: {}
+
+#learning - yaml output in document need to observe for syntax and semantic
+#command is an array; clearly observe the command specified 
+
+
+
+
