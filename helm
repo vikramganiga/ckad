@@ -1,6 +1,17 @@
-#delete release 
+#delete/install release 
 #upgrade release
 #install release
 #find the state pending state a
 
-helm
+helm list -n namespace
+
+// repo list
+helm repo list
+  helm repo list
+  NAME    URL
+  grafana https://grafana.github.io/helm-charts
+  myrepo  http://localhost:8080
+
+helm search repo <search string>
+#ex. search string nginx 
+  helm search repo grafana
