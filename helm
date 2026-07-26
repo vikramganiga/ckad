@@ -1,5 +1,6 @@
 //get installed helm charts
-helm list -n namespace
+helm list -n <namespace>
+helm list -namespace-all
 
 //get repo list
 helm repo list
@@ -15,6 +16,22 @@ helm search repo <search string>
 
 //result
 helm search repo grafana
+helm search repo grafana loki
 
 //show values ex. helm show values repo/release
 helm show values grafana/loki
+
+//helm install 
+helm install grafana grafana/grafana
+
+//result
+$helm list
+NAME    NAMESPACE       REVISION        UPDATED                                 STATUS          CHART           APP VERSION
+grafana default         1               2026-07-26 05:45:07.928817987 +0000 UTC deployed        grafana-10.5.15 12.3.1
+
+//upgrade
+helm upgrade grafana grafana/grafana --set assertNoLeakedSecrets=false
+
+//uninstall
+ helm uninstall grafana
+
