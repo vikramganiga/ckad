@@ -1,17 +1,20 @@
-#delete/install release 
-#upgrade release
-#install release
-#find the state pending state a
-
+//get installed helm charts
 helm list -n namespace
 
-// repo list
+//get repo list
 helm repo list
+
+//result
   helm repo list
   NAME    URL
   grafana https://grafana.github.io/helm-charts
   myrepo  http://localhost:8080
 
+//search chart in repo
 helm search repo <search string>
-#ex. search string nginx 
-  helm search repo grafana
+
+//result
+helm search repo grafana
+
+//show values ex. helm show values repo/release
+helm show values grafana/loki
