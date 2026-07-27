@@ -1,0 +1,29 @@
+//create service account
+kubectl create serviceaccount sa -n ckad
+
+//create secret with service account
+kubectl create secret generic sasecrete --serviceaccount=sa -n ckad --from-literal=name=ooseven
+
+//create pod with secret and service account
+kubectl run secpod --image=nginx --port=8080  -n ckad--dry-run=client -o yaml > secpod.yaml
+
+//edit secpod.yaml - add service account and secret 
+
+spec:
+  serviceAccountName: sa
+  automountServiceAccountToken: true
+
+and
+spec:
+  containers:
+  env:
+    - name: SECRET_USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: name
+          key: sasecrete
+
+//
+kubectl get secret sasecrete -o jsonpath='{.data.name}' | base64 -d
+
+kubectl get sasecrete -n ckad -o jsonpath='{.data.token}' | base64 -d
