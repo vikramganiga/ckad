@@ -233,5 +233,32 @@ spec:
            capabilities:
             add: ["NET_ADMIN"]
 
+#readiness probe
+
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: buysbox
+  name: buysbox
+spec:
+  containers:
+  - args:
+    - sh
+    - -c
+    - touch /tmp/ready && sleep 1d
+    image: busybox:1.31.0
+    name: buysbox
+    resources: {}
+    readinessProbe:
+      exec:
+        command:
+        - cat
+        - /tmp/ready
+      initialDelaySeconds: 5
+      periodSeconds: 5
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
 
 
