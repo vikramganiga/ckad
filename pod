@@ -13,3 +13,10 @@ kubectl get pod pod1
 
 $chmod +x checkpodstatus.sh
 ./checkpodstatus.sh
+
+//create pod in one namespace and move to another
+kubectl run pod --image=busybox
+
+kubectl get pod -o yaml > movepod.yaml
+kubectl create movepod.yaml
+
