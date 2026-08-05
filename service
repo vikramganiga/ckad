@@ -13,4 +13,23 @@ kubectl get deployment --show-labels
 
 kubectl get pod --show-labels
 
+//Create a ClusterIP Service named pltc in Namespace pluto. This Service should expose a single Pod named
+//plt-api of image nginx:1.17.3-alpine.The Pod should be identified by label proj: plt-api. 
+//The Service should use tcp port redirection of 3333:80.
+
+//Finally, use for example curl from a temporary nginx:alpine Pod to get the response from the Service
+//Write the response into /opt/course/10/service_test.html  
+//Also check if the logs of Pod plt-api show the request and write those into /opt/course/10/service_test.log
+
+  kubectl create service clusterip pltc -n pluto --tcp=3333:80 --dry-run=client -o yaml > service_pltc.yaml
+  edit service_pltc.yaml - change selector proj=plt-api
+  kubectl create -f service_pltc.yaml
+  
+  kubectl run  plt-api --labels=proj=plt-api --image=nginx:1.17.3-alpine --port=80 -n pluto
+  
+  kubectl run  ngxin -n pluto --image=nginx:alpine --rm -it -- curl http://<service-endpoint>:3333/index.html > /opt/course/10/service_test.html
+  
+  kubectl logs plt-api  -n pluto > /opt/course/10/service_test.log
+
+
 
