@@ -261,4 +261,13 @@ spec:
   restartPolicy: Always
 status: {}
 
+// deployment rollout issue - undo - need to test
+
+kubectl create deployment app --image=nginx
+kubectl set image deployment app nginx=xyz //wrong image set
+kubectl get pods //see error
+kubectl describe deployment app //see error
+kubectl rollout history deployment app
+kubectl rollout undo deployment app
+
 
