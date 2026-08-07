@@ -1,12 +1,12 @@
-//Create a new PersistentVolume named earth-project-earthflower-pv. 
-//It should have a capacity of 2Gi, accessMode ReadWriteOnce, hostPath /Volumes/Data and no storageClassName defined.
+//Create a new PersistentVolume named earth-pv. 
+//It should have a capacity of 2Gi, accessMode ReadWriteOnce, hostPath /volumes/data and no storageClassName defined.
 
-//Next Create a new PersistentVolumeClaim in Namespace earth named earth-project-earthflower-pvc . 
+//Next Create a new PersistentVolumeClaim in Namespace earth named earth-pvc . 
 //It should request 2Gi storage, accessMode ReadWriteOnce and should not define a storageClassName. 
 //The PVC should bound to the PV correctly.
 
-//Finally create a new Deployment project-earthflower in Namespace earth which mounts that volume at /tmp/project-data.
-//The Pods of that Deployment should be of image httpd:2.4.41-alpin
+//Finally create a new Deployment earthflower in Namespace earth which mounts that volume at /tmp/projectdata.
+//The Pods of that Deployment should be of image httpd:2.4.41-alpine
 
 Solution
 
@@ -14,25 +14,45 @@ Solution
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: earth-project-earthflower-pv
+  name: earth-pv
 spec:
   capacity:
     storage: 2Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: /Volumes/Data
+    path: /volumes/data
 
 //pvc
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: earth-project-earthflower-pvc
+  name: earth-pvc
   namespace: earth
 spec:
   accessModes:
     - ReadWriteOnce
-  volumeMode: Block
   resources:
     requests:
       storage: 2Gi
+
+//check bound
+kubectl get pvc earth-pvc
+
+//deployment
+kubectl create deployment earthflower --image=httpd:2.4.41-alpine --port=80 --dry-run=client -o yaml > earthflower.yaml
+
+edit earthflower.yaml 
+
+spec:
+  volumes:
+    - name: earth-storage
+      persistentVolumeClaim:
+        claimName: earth-pvc
+  containers:
+    - name: 
+      volumeMounts:
+        - mountPath: "/tmp/projectdata"
+          name: earth-pv
+
+
