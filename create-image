@@ -63,14 +63,14 @@ Solution
      sudo docker build registry.killer.sh:5000/sun-cipher -t latest .
    
      sudo docker push registry.killer.sh:5000/sun-cipher:latest
-      sudo docker push registry.killer.sh:5000/sun-cipher:v1-docker
+     sudo docker push registry.killer.sh:5000/sun-cipher:v1-docker
 
-     sudo podman build . -t v1-podman:latest
-     sudo podman push v1-docker:latest http://registry.killer.sh:5000/sun-cipher
+     podman build registry.killer.sh:5000/sun-cipher -t v1-podman .
+     podman push registry.killer.sh:5000/sun-cipher:v1-podman
 
-    sudo podman run v1-podman:latest -d
+     podman run -d --name sun-cipher registry.killer.sh:5000/sun-cipher:v1-podman
 
-    sudo podman list > /opt/course/11/containers
-    sudo podman log v1-podman:latest > /opt/course/11/logs
+     podman logs  sun-cipher  /opt/course/11/logs
+     podman ps 
  
 
