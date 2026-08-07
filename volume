@@ -50,9 +50,9 @@ spec:
       persistentVolumeClaim:
         claimName: earth-pvc
   containers:
-    - name: 
+    - name: test
       volumeMounts:
         - mountPath: "/tmp/projectdata"
-          name: earth-pv
+          name: earth-storage
 
 
