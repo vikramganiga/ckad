@@ -61,6 +61,8 @@ Solution
 
      sudo docker build registry.killer.sh:5000/sun-cipher -t v1-docker .
      sudo docker build registry.killer.sh:5000/sun-cipher -t latest .
+
+      podman save --format oci-archive -o sun-cipher.tar registry.killer.sh:5000/sun-cipher:latest
    
      sudo docker push registry.killer.sh:5000/sun-cipher:latest
      sudo docker push registry.killer.sh:5000/sun-cipher:v1-docker
@@ -73,4 +75,5 @@ Solution
      podman logs  sun-cipher  /opt/course/11/logs
      podman ps 
  
+
 
